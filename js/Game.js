@@ -22,9 +22,18 @@ function create() {
 
     //  The platforms group contains the ground and the 2 ledges we can jump on
     platforms = game.add.group();
+    stars = game.add.group();
 
     //  We will enable physics for any object that is created in this group
     platforms.enableBody = true;
+    stars.enableBody = true;
+    
+    for (var i = 0; i < 12; i++)
+    {
+        var star = stars.create(i*70, 0, 'star');
+        star.body.gravity.y = 200;
+        star.body.bounce.y = 0.4 + Math.random() * 0.2;
+    }
 
     // Here we create the ground.
     var ground = platforms.create(0, game.world.height - 64, 'ground');
@@ -65,6 +74,8 @@ function create() {
 function update() {
     
     game.physics.arcade.collide(player, platforms);
+    game.physics.arcade.collide(stars, platforms);
+    game.physics.arcade.overlap(player, stars, collectStar, null, this);
     
     player.body.velocity.x = 0;
     
@@ -84,4 +95,8 @@ function update() {
     if(cursors.up.isDown && player.body.touching.down){
         player.body.velocity.y = -350;
     }
+}
+
+function collectStar(player,star){
+    star.kill();
 }
